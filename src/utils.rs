@@ -1,20 +1,11 @@
-use std::{env, time, thread,io};
+use std::{env};
 use sysinfo::*;
-use whoami::*;
 use std::string::String;
 use crate::color::*;
-use std::time::Duration;
 use std::process::{Command, Stdio};
-//get the terminal emulator
-/*fn  get_term()->Option<String>{
-    let i = desktop_env().to_string();
 
-    println!("{}",i);
-    env::var("TERM").ok().and_then(extract_file_from_path)
-
-}*/
-/*pub fn terminal() -> String{
-    let term = get_term().unwrap_or_else(|| String::from("unknown"));
+/*pub fn get_terminal() -> String{
+    let output = Command::new("basename");
     return format!("{RED}Terminal{WHITE} ~ {RED}{}{RED}", term).to_string();
 }*/
 pub fn get_color_palette() ->String{
@@ -54,8 +45,22 @@ fn convert_time(uptime: u64) -> String {
     uptime_str
 }
 /*pub fn get_gpu() -> String {
+    let output = Command::new("lspci")
+        .arg("-vmm")
+        .arg("-nn")
+        .output()
+        .expect("Failed to execute command");
 
-    return gpu_name
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    let gpu_name = stdout
+        .lines()
+        .filter(|line| line.contains("VGA"))
+        .map(|line| line.split(':').nth(3))
+        .next()
+        .unwrap();
+
+    println!("GPU name: {}", gpu_name.unwrap().to_string());
+    return gpu_name.to_string()
 
 }*/
 
@@ -72,17 +77,45 @@ pub fn make_userprompt(sys:&System) -> String{
 
  pub fn get_kernel(system:&System) -> String{
      let kernel =  system.kernel_version().unwrap().to_string();
-     return format!("{RED}Kernel{WHITE} ~ {RED}{}{RED}", kernel).to_string();
+     return format!("{RED}Kernel{WHITE} ~ {WHITE}{}{RED}", kernel).to_string();
  }
+
 pub fn get_battery(system:&System) -> String
 {
     let mut batterty_percent= String::new();
-    let os= system.long_os_version().unwrap().to_string();
-    //os.unwrap().to_string();
-   /* if os ==  "Windows"  {
-        //do something
-    }*/
-    if os == "Linux 20230114 openSUSE Tumbleweed"  {
+    let percen_symbol = "%";
+    let os_long= system.long_os_version().unwrap().to_string();
+    let os_short: Vec<&str> = os_long.split_whitespace().collect();
+    let os = os_short[0];
+
+    if os ==  "Windows"  {
+        let output = Command::new("WMIC")
+            .arg("Path")
+            .arg("Win32_Battery")
+            .arg("Get")
+            .arg("EstimatedChargeRemaining")
+            .output()
+            .expect("Failed to execute command");
+
+        let stdout = String::from_utf8(output.stdout).unwrap();
+        batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
+        batterty_percent.push_str(percen_symbol);
+        //println!("{}", stdout);
+
+    }
+        else if os == "MacOs" {
+            let output = Command::new("pmset")
+                .arg("-g")
+                .arg("batt")
+                .output()
+                .expect("Failed to execute command");
+
+            let stdout = String::from_utf8(output.stdout).unwrap();
+            batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
+            batterty_percent.push_str(percen_symbol);
+            //println!("{}", stdout);
+        }
+    else if os == "Linux"  {
         let output = Command::new("cat").arg("/sys/class/power_supply/BAT0/capacity")
             // Tell the OS to record the command's output
             .stdout(Stdio::piped())
@@ -93,12 +126,12 @@ pub fn get_battery(system:&System) -> String
 
         // extract the raw bytes that we captured and interpret them as a string
         let stdout = String::from_utf8(output.stdout).unwrap();
-        batterty_percent = stdout;
-
-        //println!("{}", stdout);
-
+        //adde % add the end
+        batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
+        batterty_percent.push_str(percen_symbol);
     }
-    return format!("{GREEN}Battery {WHITE} ~ {WHITE}{}{RESET}",batterty_percent.to_string())
+    else { println!("error battery not found"); }
+    return format!("{GREEN}Battery{WHITE} ~ {WHITE}{}{RESET}",batterty_percent.to_string())
 
 
 
@@ -119,7 +152,7 @@ fn get_wm() ->Option<String> {
 }
 pub fn wm() -> String{
     let wm =get_wm().unwrap_or_else(|| String::from("unknown"));
-    return format!("{GREEN}Wm {WHITE} ~ {GREEN}{}{BLUE}",wm.to_string()).to_string()
+    return format!("{GREEN}Wm {WHITE} ~ {WHITE}{}{BLUE}",wm.to_string()).to_string()
 
 }
 /// Get Current Shell using $SHELL
@@ -128,7 +161,7 @@ fn get_shell() -> Option<String> {
 }
 pub fn shell()-> String{
     let shell = get_shell().unwrap_or_else(|| String::from("unknown"));
-    return format!("{YELLOW_BRIGHT}Shell {WHITE} ~ {YELLOW_BRIGHT}{shell}{BLUE}").to_string()
+    return format!("{YELLOW_BRIGHT}Shell {WHITE} ~ {WHITE}{shell}{BLUE}").to_string()
 
 }
 #[allow(dead_code)]
@@ -143,7 +176,7 @@ fn bytes_to_gib(bytes: u64) -> String {
 //byte 1073741824 = 1 gib
 pub fn get_os(system:&System) -> String{
     let os = system.name().unwrap().to_string();
-    return format!("{CYAN}Os{WHITE} ~ {CYAN}{}{BLUE}", os).to_string();
+    return format!("{CYAN}OS{WHITE} ~ {WHITE}{}{BLUE}", os).to_string();
 
 
 }
@@ -175,7 +208,11 @@ pub fn get_hostname(system:&System) -> String{
 }
 pub fn get_hostname_pretty(system:&System) -> String{
     let hostname= system.host_name().unwrap().to_string();
-    return format!("{RED}Host{WHITE} ~ {RED}{}{RED}", hostname).to_string();
+    return format!("{RED}Host{WHITE} ~ {WHITE}{}{RED}", hostname).to_string();
+}
+
+pub fn get_nb_packages(){
+
 }
 /// Extract last element of path
 /// Example: a/b/c -> c
