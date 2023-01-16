@@ -64,6 +64,7 @@ fn main() {
     let color_palette = utils::get_color_palette();
     let userprompt= utils::make_userprompt(&system);
     let hostname = utils::get_hostname_pretty(&system);
+    let battery = utils::get_battery(&system);
 
 
 
@@ -83,6 +84,7 @@ fn main() {
         cpu,
         memory,
         shell,
+        battery,
         color_palette
     ]
         .join("\n");

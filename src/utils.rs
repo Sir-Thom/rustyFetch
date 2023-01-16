@@ -3,9 +3,8 @@ use sysinfo::*;
 use whoami::*;
 use std::string::String;
 use crate::color::*;
-use battery::*;
 use std::time::Duration;
-use std::process::Command;
+use std::process::{Command, Stdio};
 //get the terminal emulator
 /*fn  get_term()->Option<String>{
     let i = desktop_env().to_string();
@@ -75,8 +74,35 @@ pub fn make_userprompt(sys:&System) -> String{
      let kernel =  system.kernel_version().unwrap().to_string();
      return format!("{RED}Kernel{WHITE} ~ {RED}{}{RED}", kernel).to_string();
  }
-pub fn get_battery(system:&System){
-    system.long_os_version().unwrap().to_string();
+pub fn get_battery(system:&System) -> String
+{
+    let mut batterty_percent= String::new();
+    let os= system.long_os_version().unwrap().to_string();
+    //os.unwrap().to_string();
+   /* if os ==  "Windows"  {
+        //do something
+    }*/
+    if os == "Linux 20230114 openSUSE Tumbleweed"  {
+        let output = Command::new("cat").arg("/sys/class/power_supply/BAT0/capacity")
+            // Tell the OS to record the command's output
+            .stdout(Stdio::piped())
+            // execute the command, wait for it to complete, then capture the output
+            .output()
+            // Blow up if the OS was unable to start the program
+            .unwrap();
+
+        // extract the raw bytes that we captured and interpret them as a string
+        let stdout = String::from_utf8(output.stdout).unwrap();
+        batterty_percent = stdout;
+
+        //println!("{}", stdout);
+
+    }
+    return format!("{GREEN}Battery {WHITE} ~ {WHITE}{}{RESET}",batterty_percent.to_string())
+
+
+
+
 }
 
 
