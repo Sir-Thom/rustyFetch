@@ -210,7 +210,7 @@ pub fn get_hostname_pretty(system:&System) -> String{
     let hostname= system.host_name().unwrap().to_string();
     return format!("{RED}Host{WHITE} ~ {WHITE}{}{RED}", hostname).to_string();
 }
-
+#[allow(dead_code)]
 pub fn get_nb_packages(){
 
 }
