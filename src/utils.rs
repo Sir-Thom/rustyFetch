@@ -3,7 +3,8 @@ use sysinfo::*;
 use std::string::String;
 use crate::color::*;
 use std::process::{Command, Stdio};
-
+use crate::config::*;
+use crate::config::RamStorageMesurement::*;
 /*pub fn get_terminal() -> String{
     let output = Command::new("basename");
     return format!("{RED}Terminal{WHITE} ~ {RED}{}{RED}", term).to_string();
@@ -123,7 +124,6 @@ pub fn get_battery(system:&System) -> String
             .output()
             // Blow up if the OS was unable to start the program
             .unwrap();
-
         // extract the raw bytes that we captured and interpret them as a string
         let stdout = String::from_utf8(output.stdout).unwrap();
         //adde % add the end
@@ -137,9 +137,7 @@ pub fn get_battery(system:&System) -> String
 
 
 }
-
-
-/// Get current window manager(or DE) using envvars
+/// Get current window manager(or DE) using env vars
 fn get_wm() ->Option<String> {
     let mut wm = env::var("DESKTOP_SESSION")
         .or_else(|_| env::var("XDG_CURRENT_DESKTOP"))
@@ -164,10 +162,18 @@ pub fn shell()-> String{
     return format!("{YELLOW_BRIGHT}Shell {WHITE} ~ {WHITE}{shell}{BLUE}").to_string()
 
 }
-#[allow(dead_code)]
 fn bytes_to_mb(bytes: u64) -> String {
     let mb =(bytes as f64) / 1_048_576.0;
     return format!("{:.2} Mb",mb)
+}
+// bytes 1_048_576.0 = 1 mib
+fn bytes_to_mib(bytes: u64) -> String {
+    let mb =(bytes as f64) / 1_048_576.0;
+    return format!("{:.2} Mib",mb)
+}
+fn bytes_to_gb(bytes: u64) -> String{
+    let gb = (bytes as f64)/1_073_741_824.0;
+    return format!("{:.2} Gb",gb)
 }
 fn bytes_to_gib(bytes: u64) -> String {
    let gib= (bytes as f64) / 1_073_741_824.0;
@@ -191,9 +197,30 @@ pub fn get_cpu(system:&System) -> String {
 }
 // get memory
 pub fn get_memory(system:&System) -> String {
-    let mem_in_mb_total = bytes_to_gib(system.total_memory());
-    let mem_in_mb_used =bytes_to_gib(system.used_memory());
-    let mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
+    let mut  mem_in_mb_total = String::new();
+    let mut  mem_in_mb_used = String::new();
+    let mut mem_str= String::new();
+    if read_ram() == Mb {
+        mem_in_mb_total = bytes_to_mb(system.total_memory());
+        mem_in_mb_used =bytes_to_mb(system.used_memory());
+        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
+    }
+    if read_ram() == Mb {
+        mem_in_mb_total = bytes_to_mib(system.total_memory());
+        mem_in_mb_used =bytes_to_mib(system.used_memory());
+        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
+    }
+    if read_ram() == Gb  {
+        mem_in_mb_total = bytes_to_gb(system.total_memory());
+        mem_in_mb_used =bytes_to_gb(system.used_memory());
+        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
+    }
+    if read_ram() == Gib  {
+        mem_in_mb_total = bytes_to_gib(system.total_memory());
+        mem_in_mb_used =bytes_to_gib(system.used_memory());
+        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
+    }
+
     return format!("{RED}Memory{WHITE} ~ {WHITE}{}{RED}", mem_str).to_string();
 
 }
@@ -212,7 +239,7 @@ pub fn get_hostname_pretty(system:&System) -> String{
 }
 #[allow(dead_code)]
 pub fn get_nb_packages(){
-
+// would need to check what package manager it use, flatpak chekecker ,snap and appimaged(optional)
 }
 /// Extract last element of path
 /// Example: a/b/c -> c

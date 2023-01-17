@@ -1,20 +1,26 @@
 use sysinfo::*;
 use prettytable::*;
+use crate::config::read_ascii;
+
 mod utils;
 mod  yaml ;
 mod config;
 mod color;
 
-
+fn initialize_config_file() {
+    config::check_conf_file();
+}
 
 fn main() {
+    initialize_config_file();
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
 
-    config::write_config();
     //get the ascii art form the config file
-    let art = config::read_config();
+
+    //let ram_data_type = config::read_ram();
+    let art = config::translate_ascii_colors(read_ascii().unwrap().as_str());
     // get wm
     let wm = utils::wm();
     // get cpu
@@ -38,7 +44,7 @@ fn main() {
     let battery = utils::get_battery(&system);
 
     //prepare all fetch item to print Note:order matter here
-    let system_info_col = [
+    let mut system_info_col =vec! [
         "\n".to_owned(),
         userprompt,
         os,
@@ -49,11 +55,31 @@ fn main() {
         cpu,
         memory,
         shell,
-        battery,
-        color_palette
-    ]
-        .join("\n");
+        color_palette,
+    ];
 
+    if config::check_battery() {
+        system_info_col.insert(10,battery);
+    }
+
+    let system_info_col = system_info_col.join("\n");
+
+    /* let system_info_col = [
+         "\n".to_owned(),
+         userprompt,
+         os,
+         hostname,
+         uptime,
+         kernel,
+         wm,
+         cpu,
+         memory,
+         shell,
+         battery,
+         color_palette
+     ]
+         .join("\n");
+ */
     //add all info to a table and sow the table we made
     let mut table = Table::new();
     table.add_row(row![art, system_info_col]);
