@@ -23,6 +23,8 @@ fn main() {
     let art = config::translate_ascii_colors(read_ascii().unwrap().as_str());
     // get wm
     let wm = utils::wm();
+    //get nb of installed packages
+    let packages = utils::get_nb_packages();
     // get cpu
     let cpu = utils::get_cpu(&system);
     // get shell
@@ -50,6 +52,7 @@ fn main() {
         os,
         hostname,
         uptime,
+        packages,
         kernel,
         wm,
         cpu,

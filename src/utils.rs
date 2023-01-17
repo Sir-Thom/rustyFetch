@@ -1,4 +1,5 @@
-use std::{env};
+use std::{env,fs};
+
 use sysinfo::*;
 use std::string::String;
 use crate::color::*;
@@ -237,9 +238,47 @@ pub fn get_hostname_pretty(system:&System) -> String{
     let hostname= system.host_name().unwrap().to_string();
     return format!("{RED}Host{WHITE} ~ {WHITE}{}{RED}", hostname).to_string();
 }
-#[allow(dead_code)]
-pub fn get_nb_packages(){
-// would need to check what package manager it use, flatpak chekecker ,snap and appimaged(optional)
+
+pub fn get_nb_packages() -> String{
+    let mut packages_base =String::new();
+    let mut rpm_pkgs = false;
+
+    if fs::metadata("/usr/bin/rpm").is_ok() {
+        rpm_pkgs=true;
+    }
+    let mut apt_pkgs = false;
+    if fs::metadata("/usr/bin/dpkg").is_ok() {
+        apt_pkgs=true;
+    }
+    let mut pacman_pkgs = false;
+    if fs::metadata("/usr/bin/pacman").is_ok() {
+        pacman_pkgs=true;
+    }
+
+    if rpm_pkgs ==true {
+        let output = Command::new("rpm")
+            .arg("-q")
+            .arg("-a")
+            .output().ok().unwrap();
+        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+       // println!("{stdout}");
+        packages_base = stdout.to_string();
+
+    }else if apt_pkgs ==true  {
+        let output = Command::new("dpkg")
+            .arg("-l")
+            .output().ok().unwrap();
+        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+        packages_base =stdout.to_string();
+    }
+    else if pacman_pkgs ==true{
+        let output = Command::new("pacman")
+            .arg("-Q")
+            .output().ok().unwrap();
+        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+        packages_base =stdout.to_string();
+    }
+    return  return format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}",packages_base)
 }
 /// Extract last element of path
 /// Example: a/b/c -> c
