@@ -1,11 +1,10 @@
 use sysinfo::*;
 use prettytable::*;
 use crate::config::read_ascii;
-
 mod utils;
-mod  yaml ;
 mod config;
 mod color;
+mod ascii;
 
 fn initialize_config_file() {
     config::check_conf_file();
@@ -16,7 +15,8 @@ fn main() {
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
-
+    let i = ascii::ascii_storerage();
+    i;
     //get the ascii art form the config file
 
     //let ram_data_type = config::read_ram();
@@ -67,22 +67,7 @@ fn main() {
 
     let system_info_col = system_info_col.join("\n");
 
-    /* let system_info_col = [
-         "\n".to_owned(),
-         userprompt,
-         os,
-         hostname,
-         uptime,
-         kernel,
-         wm,
-         cpu,
-         memory,
-         shell,
-         battery,
-         color_palette
-     ]
-         .join("\n");
- */
+
     //add all info to a table and sow the table we made
     let mut table = Table::new();
     table.add_row(row![art, system_info_col]);

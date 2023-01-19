@@ -4,7 +4,8 @@ use regex::Regex;
 use crate::color::*;
 use serde_derive::{Serialize, Deserialize};
 use confy::{load, ConfyError};
-use crate::config::RamStorageMesurement::*;
+use toml::{Value};
+//use crate::config::RamStorageMesurement::*;
 
 use std::fs;
 //use std::borrow::Cow;
@@ -19,6 +20,7 @@ use std::fs;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
+
     battery:bool,
     ram_data_type: RamStorageMesurement,
     ascii: String,
@@ -32,7 +34,7 @@ pub fn load_conf() -> Result<Config, confy::ConfyError> {
     Ok(cfg)
 }
 
-pub fn save(){
+/*pub fn save(){
 
     let config = Config {
         battery:true,
@@ -67,7 +69,7 @@ pub fn save(){
         Ok(_) => println!(""),
         Err(error) => println!("error: {:?}", error),
     }
-}
+}*/
 pub fn read_ascii() -> Result<String, confy::ConfyError> {
     let cfg: Config = confy::load("RustyFetch", "config")?;
     Ok(cfg.ascii)
@@ -88,10 +90,6 @@ pub fn check_battery() ->bool{
 pub fn check_conf_file() {
     let user = std::env::var("USER").expect("Failed to get current user");
     if !fs::metadata(format!("/home/{}/.config/rustyfetch/", user)).is_ok() {
-        // Create the config directory
-        println!("config.conf does not exist, creating one");
-        //println!("{}",fs::metadata("~/.config/RustyFetch/config.conf"));
-        // Create config.conf file and save default configuration
         let config = Config {
             battery:true,
             ram_data_type: RamStorageMesurement::Gib,
@@ -121,17 +119,16 @@ pub fn check_conf_file() {
         "#.to_string(),
         };
         match confy::store("RustyFetch", "config", &config) {
-            Ok(_) => println!("Config saved"),
+            Ok(_) => println!(""),
             Err(error) => println!("error: {:?}", error),
         }
     } else {
 
-       println!("config.conf already exist, doing nothing");
+      // println!("config.conf already exist, doing nothing");
     }
 }
 
-
-
+/*
 pub fn write_config_fetch_item() {
     let file = OpenOptions::new().create(true).write(true).open("config.conf");
     let mut file = match file {
@@ -147,9 +144,9 @@ pub fn write_config_fetch_item() {
             Ok(_) => (),
             Err(e) => println!("Error writing to file: {}", e),
         }
-        let infos = r#""#;
+        //let infos = r#""#;
     }
-}
+}*/
 pub fn translate_ascii_colors(ascii: &str) -> String {
     let ascii = ascii
         .replace("{c1}", BLACK)
@@ -173,7 +170,7 @@ pub fn translate_ascii_colors(ascii: &str) -> String {
     ascii
 }
 
-pub fn write_config() {
+/*pub fn write_config() {
     // Open the file for writing and create it if it doesn't exist
     let file = OpenOptions::new().create(true).write(true).open("config.conf");
 
@@ -268,7 +265,7 @@ pub fn read_config() -> String{
 
     });
     return  (ascii).to_string()
-}
+}*/
 
 impl Default for Config {
     fn default() -> Self {

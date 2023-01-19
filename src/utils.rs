@@ -1,15 +1,25 @@
 use std::{env,fs};
-
+use std::ffi::OsStr;
+use std::path::Path;
 use sysinfo::*;
 use std::string::String;
 use crate::color::*;
 use std::process::{Command, Stdio};
 use crate::config::*;
 use crate::config::RamStorageMesurement::*;
+use crate::utils::PackagesType::*;
 /*pub fn get_terminal() -> String{
     let output = Command::new("basename");
     return format!("{RED}Terminal{WHITE} ~ {RED}{}{RED}", term).to_string();
 }*/
+enum PackagesType{
+    Rpm,
+    Apt,
+    Pacman,
+    Dpkg,
+    Flatpak,
+    None,
+}
 pub fn get_color_palette() ->String{
     let color_palette =format!("{BLACK_BG}    {RED_BG}    {GREEN_BG}    {YELLOW_BG}    \
     {BLUE_BG}    {MAGENTA_BG}    {CYAN_BG}    {WHITE_BG}    {RESET}\n{BLACK_BRIGHT_BG}    \
@@ -197,34 +207,34 @@ pub fn get_cpu(system:&System) -> String {
     return format!("{RED}Cpu{WHITE} ~ {WHITE}{}{RED}",cpu_brand);
 }
 // get memory
-pub fn get_memory(system:&System) -> String {
-    let mut  mem_in_mb_total = String::new();
-    let mut  mem_in_mb_used = String::new();
-    let mut mem_str= String::new();
-    if read_ram() == Mb {
-        mem_in_mb_total = bytes_to_mb(system.total_memory());
-        mem_in_mb_used =bytes_to_mb(system.used_memory());
-        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
-    }
-    if read_ram() == Mb {
-        mem_in_mb_total = bytes_to_mib(system.total_memory());
-        mem_in_mb_used =bytes_to_mib(system.used_memory());
-        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
-    }
-    if read_ram() == Gb  {
-        mem_in_mb_total = bytes_to_gb(system.total_memory());
-        mem_in_mb_used =bytes_to_gb(system.used_memory());
-        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
-    }
-    if read_ram() == Gib  {
-        mem_in_mb_total = bytes_to_gib(system.total_memory());
-        mem_in_mb_used =bytes_to_gib(system.used_memory());
-        mem_str = format!("{} / {} ",mem_in_mb_used,mem_in_mb_total);
-    }
-
+pub fn get_memory(system: &System) -> String {
+    let mem_in_total;
+    let mem_in_used;
+    let mem_str = match read_ram() {
+        Mb => {
+            mem_in_total = bytes_to_mb(system.total_memory());
+            mem_in_used = bytes_to_mb(system.used_memory());
+            format!("{} / {} ", mem_in_used, mem_in_total)
+        },
+        Mib => {
+            mem_in_total = bytes_to_mib(system.total_memory());
+            mem_in_used = bytes_to_mib(system.used_memory());
+            format!("{} / {} ", mem_in_used, mem_in_total)
+        },
+        Gb => {
+            mem_in_total = bytes_to_gb(system.total_memory());
+            mem_in_used = bytes_to_gb(system.used_memory());
+            format!("{} / {} ", mem_in_used, mem_in_total)
+        },
+        Gib => {
+            mem_in_total = bytes_to_gib(system.total_memory());
+            mem_in_used = bytes_to_gib(system.used_memory());
+            format!("{} / {} ", mem_in_used, mem_in_total)
+        },
+    };
     return format!("{RED}Memory{WHITE} ~ {WHITE}{}{RED}", mem_str).to_string();
-
 }
+
 /*pub fn get_username() -> String{
     let username = std::env::var("USER").unwrap();
     return username;
@@ -241,44 +251,81 @@ pub fn get_hostname_pretty(system:&System) -> String{
 
 pub fn get_nb_packages() -> String{
     let mut packages_base =String::new();
-    let mut rpm_pkgs = false;
+    let mut install_packages_managers = vec![];
+    let package_managers = vec![
+        (Rpm, "/usr/bin/rpm"),
+        (Apt, "/usr/bin/apt"),
+        (Pacman, "/usr/bin/pacman"),
+        (Flatpak, "/usr/bin/flatpak"),
+        (Dpkg, "/usr/bin/dpkg"),
+    ];
 
-    if fs::metadata("/usr/bin/rpm").is_ok() {
-        rpm_pkgs=true;
-    }
-    let mut apt_pkgs = false;
-    if fs::metadata("/usr/bin/dpkg").is_ok() {
-        apt_pkgs=true;
-    }
-    let mut pacman_pkgs = false;
-    if fs::metadata("/usr/bin/pacman").is_ok() {
-        pacman_pkgs=true;
+    for (pkg_type, path) in package_managers {
+        if fs::metadata(path).is_ok() {
+            install_packages_managers.push(pkg_type);
+        }
     }
 
-    if rpm_pkgs ==true {
-        let output = Command::new("rpm")
-            .arg("-q")
-            .arg("-a")
-            .output().ok().unwrap();
-        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-       // println!("{stdout}");
-        packages_base = stdout.to_string();
 
-    }else if apt_pkgs ==true  {
-        let output = Command::new("dpkg")
-            .arg("-l")
-            .output().ok().unwrap();
-        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-        packages_base =stdout.to_string();
+    for package in install_packages_managers {
+
+        match package {
+            Rpm => {
+                let str_pkg_type=" (Rpm) ";
+                let output = Command::new("rpm")
+                    .arg("-q")
+                    .arg("-a")
+                    .output().ok().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+
+                packages_base.push_str(stdout.to_string().as_str());
+                packages_base.push_str(str_pkg_type);
+
+            },
+            Apt => {
+                let str_pkg_type=" (Apt) ";
+                let output = Command::new("apt")
+                    .arg("-l")
+                    .output().ok().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                packages_base.push_str(stdout.to_string().as_str());
+                packages_base.push_str(str_pkg_type);
+            },
+            Pacman =>{
+                let str_pkg_type=" (Pacman) ";
+                let output = Command::new("pacman")
+                    .arg("-Q")
+                    .output().ok().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                packages_base.push_str(stdout.to_string().as_str());
+                packages_base.push_str(str_pkg_type);
+            },
+            Dpkg => {
+                let str_pkg_type=" (Dpkg) ";
+                let output = Command::new("dpkg-query")
+                    .arg("-f")
+                    .arg(".\n")
+                    .arg("-W")
+                    .output().ok().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                packages_base.push_str(stdout.to_string().as_str());
+                packages_base.push_str(str_pkg_type);
+
+            },
+            Flatpak => {
+                let type_pkg=" (flatpak) ";
+                let output = Command::new("flatpak")
+                    .arg("list")
+                    .output().ok().unwrap();
+                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                packages_base.push_str(stdout.to_string().as_str());
+                packages_base.push_str(type_pkg);
+            },
+            None => println!("None of those packages managers are present"),
+        }
     }
-    else if pacman_pkgs ==true{
-        let output = Command::new("pacman")
-            .arg("-Q")
-            .output().ok().unwrap();
-        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-        packages_base =stdout.to_string();
-    }
-    return  return format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}",packages_base)
+    packages_base=format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}",packages_base);
+    return packages_base
 }
 /// Extract last element of path
 /// Example: a/b/c -> c
