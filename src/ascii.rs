@@ -2,7 +2,7 @@ use regex::Regex;
 use crate::color::*;
 use std::collections::HashMap;
 
-pub fn ascii_storerage(){
+pub fn ascii_storage(){
     let mut ascii_art: HashMap<&str, &str> = HashMap::new();
     ascii_art.insert("custom", r#"
 {c2}   ///
@@ -86,8 +86,52 @@ pub fn ascii_storerage(){
          /////////////////////
              /////////////
     "#);
+    ascii_art.insert("Ubuntu",r#"
+{c4}              .-/+oossssoo+\-.
+{c4}          ´:+ssssssssssssssssss+:`
+{c4}        -+ssssssssssssssssssyyssss+-
+{c4}      .ossssssssssssssssss{c8}dMMMNy{c4}sssso.
+{c4}     /sssssssssss{c8}hdmmNNmmyNMMMMh{c4}ssssss\
+{c4}    +sssssssss{c8}hm{c4}yd{c8}MMMMMMMNddddy{c4}ssssssss+
+{c4}   /ssssssss{c8}hNMMM{c4}yh{c8}hyyyyhmNMMMNh{c4}ssssssss\
+{c4}  .ssssssss{c8}dMMMNh{c4}ssssssssss{c8}hNMMMd{c4}ssssssss.
+{c4}  +ssss{c8}hhhyNMMNy{c4}ssssssssssss{c8}yNMMMy{c4}sssssss+
+{c4}  oss{c8}yNMMMNyMMh{c4}ssssssssssssss{c8}hmmmh{c4}ssssssso
+{c4}  oss{c8}yNMMMNyMMh{c4}sssssssssssssshmmmh{c4}ssssssso
+{c4}  +ssss{c8}hhhyNMMNy{c4}ssssssssssss{c8}yNMMMy{c4}sssssss+
+{c4}  .ssssssss{c8}dMMMNh{c4}ssssssssss{c8}hNMMMd{c4}ssssssss.
+{c4}   \ssssssss{c8}hNMMM{c4}yh{c8}hyyyyhdNMMMNh{c4}ssssssss/
+{c4}    +sssssssss{c8}dm{c4}yd{c8}MMMMMMMMddddy{c4}ssssssss+
+{c4}     \sssssssssss{c8}hdmNNNNmyNMMMMh{c4}ssssss/
+{c4}      .ossssssssssssssssss{c8}dMMMNy{c4}sssso.
+{c4}        -+sssssssssssssssss{c8}yyy{c4}ssss+-
+{c4}          `:+ssssssssssssssssss+:`
+{c4}              .-\+oossssoo+/-.
+        "#,
+    );
+    ascii_art.insert("Fedora",r#"
+    {c14}         .',;::::;,'.
+         .';:cccccccccccc:;,.
+      .;cccccccccccccccccccccc;.
+    .:cccccccccccccccccccccccccc:.
+  .;ccccccccccccc;{c8}.:dddl:.{c14};ccccccc;.
+ .:ccccccccccccc;{c8}OWMKOOXMWd{c14};ccccccc:.
+.:ccccccccccccc;{c8}KMMc{c14};cc;{c8}xMMc{c14};ccccccc:.
+,cccccccccccccc;{c8}MMM.{c14};cc;{c8};WW:{c14};cccccccc,
+:cccccccccccccc;{c8}MMM.{c14};cccccccccccccccc:
+:ccccccc;{c8}oxOOOo{c14};{c8}MMM0OOk.{c14};cccccccccccc:
+cccccc;{c8}0MMKxdd:{c14};{c8}MMMkddc.{c14};cccccccccccc;
+ccccc;{c8}XM0'{c14};cccc;{c8}MMM.{c14};cccccccccccccccc'
+ccccc;{c8}MMo{c14};ccccc;{c8}MMW.{c14};ccccccccccccccc;
+ccccc;{c8}0MNc.{c14}ccc{c8}.xMMd{c14};ccccccccccccccc;
+cccccc;{c8}dNMWXXXWM0:{c14};cccccccccccccc:,
+cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
+:cccccccccccccccccccccccccccc:'.
+.:cccccccccccccccccccccc:;,..
+  '::cccccccccccccc::;,.
+    "#);
 
-    let my_art = ascii_art.get("Pop!_OS").unwrap();
+    let my_art = ascii_art.get("Fedora").unwrap();
 
     println!("{}", translate_ascii_colors(my_art));
 }

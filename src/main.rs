@@ -15,7 +15,7 @@ fn main() {
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
-    let i = ascii::ascii_storerage();
+    let i = ascii::ascii_storage();
     i;
     //get the ascii art form the config file
 
