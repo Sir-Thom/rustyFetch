@@ -129,9 +129,42 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 :cccccccccccccccccccccccccccc:'.
 .:cccccccccccccccccccccc:;,..
   '::cccccccccccccc::;,.
+    {reset}"#);
+    ascii_art.insert("Manjaro",r#"{c3}
+██████████████████  ████████
+██████████████████  ████████
+██████████████████  ████████
+██████████████████  ████████
+████████            ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+████████  ████████  ████████
+    "#);
+    ascii_art.insert("EndeavourOS",r#"
+{c2}                     ./{c6}o{c4}.
+{c2}                   ./{c6}sssso{c4}-
+{c2}                 `:{c6}osssssss+{c4}-
+{c2}               `:+{c6}sssssssssso{c4}/.
+{c2}             `-/o{c6}ssssssssssssso{c4}/.
+{c2}           `-/+{c6}sssssssssssssssso{c4}+:`
+{c2}         `-:/+{c6}sssssssssssssssssso{c4}+/.
+{c2}       `.://o{c6}sssssssssssssssssssso{c4}++-
+{c2}      .://+{c6}ssssssssssssssssssssssso{c4}++:
+{c2}    .:///o{c6}ssssssssssssssssssssssssso{c4}++:
+{c2}  `:////{c6}ssssssssssssssssssssssssssso{c4}+++.
+{c2}`-////+{c6}ssssssssssssssssssssssssssso{c4}++++-
+{c2} `..-+{c6}oosssssssssssssssssssssssso{c4}+++++/`
+   ./++++++++++++++++++++++++++++++/:.
+  `:::::::::::::::::::::::::------``
     "#);
 
-    let my_art = ascii_art.get("Fedora").unwrap();
+    let my_art = ascii_art.get("EndeavourOS").unwrap();
 
     println!("{}", translate_ascii_colors(my_art));
 }

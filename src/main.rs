@@ -17,6 +17,7 @@ fn main() {
     system.refresh_all();
     let i = ascii::ascii_storage();
     i;
+    let o = config::find_os(&system);
     //get the ascii art form the config file
 
     //let ram_data_type = config::read_ram();

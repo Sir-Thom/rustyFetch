@@ -1,10 +1,13 @@
 use std::fs::OpenOptions;
+use std::io::prelude::*;
 use std::io::{Read, Write,Seek};
 use regex::Regex;
 use crate::color::*;
 use serde_derive::{Serialize, Deserialize};
 use confy::{load, ConfyError};
 use toml::{Value};
+use sysinfo::*;
+use std::collections::HashMap;
 //use crate::config::RamStorageMesurement::*;
 
 use std::fs;
@@ -26,6 +29,63 @@ pub struct Config {
     ascii: String,
 }
 
+
+fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
+    let mut file = match OpenOptions::new().read(true).write(true).open(file_path) {
+        Ok(file) => file,
+        Err(e) => {
+            println!("Failed to open file: {}", e);
+            return;
+        }
+    };
+    let mut contents = String::new();
+    match file.read_to_string(&mut contents) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("Failed to read file: {}", e);
+            return;
+        }
+    }
+
+    let lines: Vec<&str> = contents.split("\n").collect();
+    let mut lines = lines.into_iter();
+    let mut new_contents = String::new();
+
+    for (i, line) in lines.enumerate() {
+        if 14 == line.len() {
+            println!("penis ");
+            new_contents.push_str(&format!("# {}\n", comment));
+        }
+        new_contents.push_str(&format!("{}\n", line));
+        println!("{}",new_contents);
+        println!("len {}",line.len());
+        println!("{}",i);
+    }
+
+    match file.seek(std::io::SeekFrom::Start(0)) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("Failed to seek in file: {}", e);
+            return;
+        }
+    }
+    match file.set_len(0) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("Failed to truncate file: {}", e);
+            return;
+        }
+    }
+    match file.write_all(new_contents.as_bytes()) {
+        Ok(_) => println!("Comment added to {} at line {}", file_path, line+1),
+        Err(e) => println!("Failed to write to file: {}", e),
+    }
+}
+
+pub fn find_os(system:&System){
+    let os_name = system.name();
+    println!("{}",os_name.unwrap());
+}
 
 
 pub fn load_conf() -> Result<Config, confy::ConfyError> {
@@ -122,10 +182,13 @@ pub fn check_conf_file() {
             Ok(_) => println!(""),
             Err(error) => println!("error: {:?}", error),
         }
+        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","show battery %",0)
+
     } else {
 
       // println!("config.conf already exist, doing nothing");
     }
+
 }
 
 /*
