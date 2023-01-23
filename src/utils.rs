@@ -279,83 +279,93 @@ pub fn get_hostname_pretty(system:&System) -> String{
     return format!("{RED}Host{WHITE} ~ {WHITE}{}{RED}", hostname).to_string();
 }
 
-pub fn get_nb_packages() -> String{
+pub fn get_nb_packages(system:&System) -> String{
     let mut packages_base =String::new();
-    let mut install_packages_managers = vec![];
-    let package_managers = vec![
-        (Rpm, "/usr/bin/rpm"),
-        (Apt, "/usr/bin/apt"),
-        (Pacman, "/usr/bin/pacman"),
-        (Flatpak, "/usr/bin/flatpak"),
-        (Dpkg, "/usr/bin/dpkg"),
-    ];
+    if verify_os(&system) == "Windows" {
+        let output = Command::new("winget")
+            .arg("list")
+           // .arg("-a")
+            .output().ok().unwrap();
+        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
 
-    for (pkg_type, path) in package_managers {
-        if fs::metadata(path).is_ok() {
-            install_packages_managers.push(pkg_type);
-        }
+        packages_base.push_str(stdout.to_string().as_str());
+        //packages_base.push_str(str_pkg_type);
+        return  packages_base
     }
+    else {
+        let mut install_packages_managers = vec![];
+        let package_managers = vec![
+            (Rpm, "/usr/bin/rpm"),
+            (Apt, "/usr/bin/apt"),
+            (Pacman, "/usr/bin/pacman"),
+            (Flatpak, "/usr/bin/flatpak"),
+            (Dpkg, "/usr/bin/dpkg"),
+        ];
 
-
-    for package in install_packages_managers {
-
-        match package {
-            Rpm => {
-                let str_pkg_type=" (Rpm) ";
-                let output = Command::new("rpm")
-                    .arg("-q")
-                    .arg("-a")
-                    .output().ok().unwrap();
-                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-
-                packages_base.push_str(stdout.to_string().as_str());
-                packages_base.push_str(str_pkg_type);
-
-            },
-            Apt => {
-                let str_pkg_type=" (Apt) ";
-                let output = Command::new("apt")
-                    .arg("-l")
-                    .output().ok().unwrap();
-                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-                packages_base.push_str(stdout.to_string().as_str());
-                packages_base.push_str(str_pkg_type);
-            },
-            Pacman =>{
-                let str_pkg_type=" (Pacman) ";
-                let output = Command::new("pacman")
-                    .arg("-Q")
-                    .output().ok().unwrap();
-                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-                packages_base.push_str(stdout.to_string().as_str());
-                packages_base.push_str(str_pkg_type);
-            },
-            Dpkg => {
-                let str_pkg_type=" (Dpkg) ";
-                let output = Command::new("dpkg-query")
-                    .arg("-f")
-                    .arg(".\n")
-                    .arg("-W")
-                    .output().ok().unwrap();
-                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-                packages_base.push_str(stdout.to_string().as_str());
-                packages_base.push_str(str_pkg_type);
-
-            },
-            Flatpak => {
-                let type_pkg=" (flatpak) ";
-                let output = Command::new("flatpak")
-                    .arg("list")
-                    .output().ok().unwrap();
-                let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
-                packages_base.push_str(stdout.to_string().as_str());
-                packages_base.push_str(type_pkg);
-            },
-            None => println!("None of those packages managers are present"),
+        for (pkg_type, path) in package_managers {
+            if fs::metadata(path).is_ok() {
+                install_packages_managers.push(pkg_type);
+            }
         }
+
+
+        for package in install_packages_managers {
+            match package {
+                Rpm => {
+                    let str_pkg_type = " (Rpm) ";
+                    let output = Command::new("rpm")
+                        .arg("-q")
+                        .arg("-a")
+                        .output().ok().unwrap();
+                    let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+
+                    packages_base.push_str(stdout.to_string().as_str());
+                    packages_base.push_str(str_pkg_type);
+                },
+                Apt => {
+                    let str_pkg_type = " (Apt) ";
+                    let output = Command::new("apt")
+                        .arg("-l")
+                        .output().ok().unwrap();
+                    let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                    packages_base.push_str(stdout.to_string().as_str());
+                    packages_base.push_str(str_pkg_type);
+                },
+                Pacman => {
+                    let str_pkg_type = " (Pacman) ";
+                    let output = Command::new("pacman")
+                        .arg("-Q")
+                        .output().ok().unwrap();
+                    let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                    packages_base.push_str(stdout.to_string().as_str());
+                    packages_base.push_str(str_pkg_type);
+                },
+                Dpkg => {
+                    let str_pkg_type = " (Dpkg) ";
+                    let output = Command::new("dpkg-query")
+                        .arg("-f")
+                        .arg(".\n")
+                        .arg("-W")
+                        .output().ok().unwrap();
+                    let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                    packages_base.push_str(stdout.to_string().as_str());
+                    packages_base.push_str(str_pkg_type);
+                },
+                Flatpak => {
+                    let type_pkg = " (flatpak) ";
+                    let output = Command::new("flatpak")
+                        .arg("list")
+                        .output().ok().unwrap();
+                    let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+                    packages_base.push_str(stdout.to_string().as_str());
+                    packages_base.push_str(type_pkg);
+                },
+                None => println!("None of those packages managers are present"),
+            }
+        }
+        packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
+        return packages_base
     }
-    packages_base=format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}",packages_base);
-    return packages_base
 }
 /// Extract last element of path
 /// Example: a/b/c -> c

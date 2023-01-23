@@ -29,7 +29,7 @@ fn main() {
     // get wm
     let wm = utils::wm(&system);
     //get nb of installed packages
-    let packages = utils::get_nb_packages();
+    let packages = utils::get_nb_packages(&system);
     // get cpu
     let cpu = utils::get_cpu(&system);
     // get shell
