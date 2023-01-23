@@ -265,10 +265,7 @@ pub fn get_memory(system: &System) -> String {
     return format!("{RED}Memory{WHITE} ~ {WHITE}{}{RED}", mem_str).to_string();
 }
 
-/*pub fn get_username() -> String{
-    let username = std::env::var("USER").unwrap();
-    return username;
-}*/
+
 pub fn get_hostname(system:&System) -> String{
     let hostname= system.host_name().unwrap().to_string();
     return hostname;
