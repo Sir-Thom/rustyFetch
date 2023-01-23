@@ -9,6 +9,7 @@ use toml::{Value};
 use sysinfo::*;
 use std::collections::HashMap;
 use crate::ascii::*;
+use crate::utils::verify_os;
 //use crate::config::RamStorageMesurement::*;
 
 use std::fs;
@@ -86,9 +87,10 @@ fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
     }
 }
 
-pub fn find_os(system:&System){
-    let os_name = system.name();
-    println!("{}",os_name.unwrap());
+pub fn find_os(system:&System) -> String {
+    let os_name = system.name().unwrap();
+    return  os_name
+ //   println!("{}",os_name.unwrap());
 }
 
 
@@ -151,13 +153,18 @@ pub fn check_battery() ->bool{
     //println!("Ram data type: {:?}", ram_data_type);
     return battery
 }
-pub fn check_conf_file() {
-    let user = std::env::var("USER").expect("Failed to get current user");
-    if !fs::metadata(format!("/home/{}/.config/rustyfetch/", user)).is_ok() {
-        let config = Config {
-            battery:true,
-            ram_data_type: RamStorageMesurement::Gib,
-            ascii: r#"
+pub fn check_conf_file(system:&System) {
+
+    if find_os(&system) == "Windows"  {
+
+    }
+    else {
+        let user = std::env::var("USER").expect("Failed to get current user");
+        if !fs::metadata(format!("/home/{}/.config/rustyfetch/", user)).is_ok() {
+            let config = Config {
+                battery: true,
+                ram_data_type: RamStorageMesurement::Gib,
+                ascii: r#"
 {c2}   ///
 {c2}   -::-`:     {c3}.--/:-
 {c2}   `-:::::..::{c3}+///+//++:+
@@ -181,16 +188,14 @@ pub fn check_conf_file() {
 {c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
           {c14}///////////////////////////:
         "#.to_string(),
-        };
-        match confy::store("RustyFetch", "config", &config) {
-            Ok(_) => println!(""),
-            Err(error) => println!("error: {:?}", error),
+            };
+            match confy::store("RustyFetch", "config", &config) {
+                Ok(_) => println!(""),
+                Err(error) => println!("error: {:?}", error),
+            }
+            add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml", "show battery %", 0);
+            add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml", "this allow to choose between multiple data units the option are Mb,Mib,Gb,Gbi ", 6)
         }
-        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","show battery %",0);
-        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","this allow to choose between multiple data units the option are Mb,Mib,Gb,Gbi ",6)
-    } else {
-
-      // println!("config.conf already exist, doing nothing");
     }
 
 }

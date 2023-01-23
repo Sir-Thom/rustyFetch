@@ -75,7 +75,7 @@ fn convert_time(uptime: u64) -> String {
     return gpu_name.to_string()
 
 }*/
-fn verify_os(system:&System) -> String{
+pub fn verify_os(system:&System) -> String{
     let os = system.name().unwrap();
     return  os;
 }

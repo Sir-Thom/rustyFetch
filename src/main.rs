@@ -8,7 +8,9 @@ mod ascii;
 mod test;
 
 fn initialize_config_file() {
-    config::check_conf_file();
+    let mut system = System::new_all();
+    system.refresh_all();
+    config::check_conf_file(&system);
 }
 
 fn main() {
