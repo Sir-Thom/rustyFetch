@@ -75,15 +75,29 @@ fn convert_time(uptime: u64) -> String {
     return gpu_name.to_string()
 
 }*/
-
+fn verify_os(system:&System) -> String{
+    let os = system.name().unwrap();
+    return  os;
+}
 pub fn make_userprompt(sys:&System) -> String{
 
-    let host = get_hostname(sys);
-    let username = std::env::var("USER").unwrap();
+    if verify_os == "Windows" {
+        let host = get_hostname(sys);
+        let username =  std::env::var("%USERNAME%").unwrap();
 
-    let total_width = host.len() + username.len() + 1;
-    let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
-    let prompt = format!("{WHITE}{}@{}\n{WHITE}{}",username,host,linebreak);
+        let total_width = host.len() + username.len() + 1;
+        let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
+        let prompt = format!("{WHITE}{}@{}\n{WHITE}{}",username,host,linebreak);
+
+    }
+    else {
+        let host = get_hostname(sys);
+        let username = std::env::var("USER").unwrap();
+
+        let total_width = host.len() + username.len() + 1;
+        let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
+        let prompt = format!("{WHITE}{}@{}\n{WHITE}{}", username, host, linebreak);
+    }
     return prompt ;
 }
 
@@ -159,7 +173,7 @@ fn get_wm() ->Option<String> {
     if wm.starts_with('/') {
         wm = extract_file_from_path(&wm)?;
     }
-    
+
     Some(wm)
 }
 pub fn wm() -> String{
