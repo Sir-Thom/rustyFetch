@@ -290,6 +290,7 @@ pub fn get_nb_packages(system:&System) -> String{
 
         packages_base.push_str(stdout.to_string().as_str());
         //packages_base.push_str(str_pkg_type);
+        packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
         return  packages_base
     }
     else {
