@@ -81,14 +81,14 @@ fn verify_os(system:&System) -> String{
 }
 pub fn make_userprompt(sys:&System) -> String{
 
-    if verify_os == "Windows".to_string() {
+    if verify_os(&sys) == "Windows".to_string() {
         let host = get_hostname(sys);
         let username =  std::env::var("%USERNAME%").unwrap();
 
         let total_width = host.len() + username.len() + 1;
         let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
         let prompt = format!("{WHITE}{}@{}\n{WHITE}{}",username,host,linebreak);
-
+        return prompt ;
     }
     else {
         let host = get_hostname(sys);
@@ -97,8 +97,9 @@ pub fn make_userprompt(sys:&System) -> String{
         let total_width = host.len() + username.len() + 1;
         let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
         let prompt = format!("{WHITE}{}@{}\n{WHITE}{}", username, host, linebreak);
+        return prompt ;
     }
-    return prompt ;
+
 }
 
  pub fn get_kernel(system:&System) -> String{
