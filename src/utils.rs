@@ -83,7 +83,7 @@ pub fn make_userprompt(sys:&System) -> String{
 
     if verify_os(&sys) == "Windows".to_string() {
         let host = get_hostname(sys);
-        let username =  std::env::var("%USERNAME%").unwrap();
+        let username =  std::env::var("username").unwrap();
 
         let total_width = host.len() + username.len() + 1;
         let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
@@ -210,7 +210,7 @@ fn bytes_to_gib(bytes: u64) -> String {
 }
 //byte 1073741824 = 1 gib
 pub fn get_os(system:&System) -> String{
-    let os = system.name().unwrap().to_string();
+    let os = system.long_os_version().unwrap();
     return format!("{CYAN}OS{WHITE} ~ {WHITE}{}{BLUE}", os).to_string();
 
 
