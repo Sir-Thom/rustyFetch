@@ -7,6 +7,7 @@ use crate::color::*;
 use std::process::{Command, Stdio};
 use crate::config::*;
 use crate::config::RamStorageMesurement::*;
+use crate::utils::verify_os;
 //use crate::utils::PackagesType::*;
 
 pub fn main(){
@@ -35,7 +36,7 @@ fn test_battery(system:&System){
     let os_short: Vec<&str> = os_long.split_whitespace().collect();
     let os = os_short[0];
 
-    if os ==  "Windows"  {
+    if verify_os(&system) ==  "Windows"  {
         let output = Command::new("WMIC")
             .arg("Path")
             .arg("Win32_Battery")
@@ -50,7 +51,7 @@ fn test_battery(system:&System){
         //println!("{}", stdout);
 
     }
-    else if os == "MacOs" {
+    else if verify_os(&system) == "MacOs" {
         let output = Command::new("pmset")
             .arg("-g")
             .arg("batt")
@@ -62,7 +63,8 @@ fn test_battery(system:&System){
         batterty_percent.push_str(percen_symbol);
         //println!("{}", stdout);
     }
-    else if os == "Linux"  {
+        //verify_os(&system) == "Linux"
+    else   {
         let output = Command::new("cat").arg("/sys/class/power_supply/BAT0/capacity")
             // Tell the OS to record the command's output
             .stdout(Stdio::piped())
