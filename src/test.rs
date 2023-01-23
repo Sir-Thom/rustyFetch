@@ -79,5 +79,5 @@ fn test_battery(system:&System){
         batterty_percent.push_str(percen_symbol);
         println!("Battery : {} ",batterty_percent);
     }
-    else { println!("error battery not found"); }
+    //else { println!("error battery not found"); }
 }
