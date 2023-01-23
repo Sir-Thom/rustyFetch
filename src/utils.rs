@@ -81,7 +81,7 @@ fn verify_os(system:&System) -> String{
 }
 pub fn make_userprompt(sys:&System) -> String{
 
-    if verify_os == "Windows" {
+    if verify_os == "Windows".to_string() {
         let host = get_hostname(sys);
         let username =  std::env::var("%USERNAME%").unwrap();
 
