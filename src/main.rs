@@ -27,7 +27,7 @@ fn main() {
     //let ram_data_type = config::read_ram();
     let art = config::translate_ascii_colors(read_ascii().unwrap().as_str());
     // get wm
-    let wm = utils::wm();
+    let wm = utils::wm(&system);
     //get nb of installed packages
     let packages = utils::get_nb_packages();
     // get cpu

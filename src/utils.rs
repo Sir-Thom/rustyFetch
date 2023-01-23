@@ -166,7 +166,7 @@ pub fn get_battery(system:&System) -> String
 /// Get current window manager(or DE) using env vars
 fn get_wm() ->Option<String> {
     //let os = system.name().unwrap();
-    //if
+
     let mut wm = env::var("DESKTOP_SESSION")
         .or_else(|_| env::var("XDG_CURRENT_DESKTOP"))
         .or_else(|_| env::var("WINDOWMANAGER"))
@@ -177,10 +177,15 @@ fn get_wm() ->Option<String> {
 
     Some(wm)
 }
-pub fn wm() -> String{
-    let wm =get_wm().unwrap_or_else(|| String::from("unknown"));
-    return format!("{GREEN}Wm {WHITE} ~ {WHITE}{}{BLUE}",wm.to_string()).to_string()
-
+pub fn wm(system:&System) -> String{
+    if verify_os(&system) == "Windows"{
+        let wm = "DWM".to_string();
+        return format!("{GREEN}Wm {WHITE} ~ {WHITE}{}{BLUE}",wm).to_string()
+    }
+    else {
+        let wm = get_wm().unwrap_or_else(|| String::from("unknown"));
+        return format!("{GREEN}Wm {WHITE} ~ {WHITE}{}{BLUE}", wm.to_string()).to_string()
+    }
 }
 /// Get Current Shell using $SHELL
 fn get_shell() -> Option<String> {
