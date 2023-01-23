@@ -162,7 +162,7 @@ pub fn check_conf_file(system:&System) {
         let user = std::env::var("USER").expect("Failed to get current user");
         if !fs::metadata(format!("/home/{}/.config/rustyfetch/", user)).is_ok() {
             let config = Config {
-                battery: true,
+                battery: false,
                 ram_data_type: RamStorageMesurement::Gib,
                 ascii: r#"
 {c2}   ///
