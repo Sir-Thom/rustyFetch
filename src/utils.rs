@@ -12,7 +12,7 @@ use crate::utils::PackagesType::*;
     let output = Command::new("basename");
     return format!("{RED}Terminal{WHITE} ~ {RED}{}{RED}", term).to_string();
 }*/
-enum PackagesType{
+pub enum PackagesType{
     Rpm,
     Apt,
     Pacman,
@@ -282,16 +282,18 @@ pub fn get_hostname_pretty(system:&System) -> String{
 pub fn get_nb_packages(system:&System) -> String{
     let mut packages_base =String::new();
     if verify_os(&system) == "Windows" {
-        let output = Command::new("winget")
-            .arg("list")
-           // .arg("-a")
-            .output().ok().unwrap();
-        let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+            let str_pkg_type = " (Winget) ";
+            let output = Command::new("winget")
+                .arg("list")
+               // .arg("-a")
+                .output().ok().unwrap();
 
-        packages_base.push_str(stdout.to_string().as_str());
-        //packages_base.push_str(str_pkg_type);
-        packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
-        return  packages_base
+            let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
+            packages_base.push_str(stdout.to_string().as_str());
+            packages_base.push_str(str_pkg_type);
+            //packages_base.push_str(str_pkg_type);
+            packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
+            return  packages_base
     }
     else {
         let mut install_packages_managers = vec![];
