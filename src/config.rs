@@ -8,6 +8,7 @@ use confy::{load, ConfyError};
 use toml::{Value};
 use sysinfo::*;
 use std::collections::HashMap;
+use crate::ascii::*;
 //use crate::config::RamStorageMesurement::*;
 
 use std::fs;
@@ -51,15 +52,17 @@ fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
     let mut lines = lines.into_iter();
     let mut new_contents = String::new();
 
-    for (i, line) in lines.enumerate() {
-        if 14 == line.len() {
-            println!("penis ");
+    for ( mut i, line) in lines.enumerate() {
+        if  i == line.lines().count() {
+
             new_contents.push_str(&format!("# {}\n", comment));
+
         }
         new_contents.push_str(&format!("{}\n", line));
-        println!("{}",new_contents);
-        println!("len {}",line.len());
-        println!("{}",i);
+        println!("new contents : {}",new_contents);
+        println!("line : {}",line);
+        println!("i : {}",i);
+        i+=1;
     }
 
     match file.seek(std::io::SeekFrom::Start(0)) {
@@ -77,6 +80,7 @@ fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
         }
     }
     match file.write_all(new_contents.as_bytes()) {
+
         Ok(_) => println!("Comment added to {} at line {}", file_path, line+1),
         Err(e) => println!("Failed to write to file: {}", e),
     }
@@ -182,8 +186,8 @@ pub fn check_conf_file() {
             Ok(_) => println!(""),
             Err(error) => println!("error: {:?}", error),
         }
-        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","show battery %",0)
-
+        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","show battery %",0);
+        add_comment_to_toml("/home/thomas/.config/rustyfetch/config.toml","this allow to choose between multiple data units the option are Mb,Mib,Gb,Gbi ",6)
     } else {
 
       // println!("config.conf already exist, doing nothing");
@@ -210,6 +214,8 @@ pub fn write_config_fetch_item() {
         //let infos = r#""#;
     }
 }*/
+//pub fn
+//pub fn
 pub fn translate_ascii_colors(ascii: &str) -> String {
     let ascii = ascii
         .replace("{c1}", BLACK)

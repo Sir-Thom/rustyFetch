@@ -5,6 +5,7 @@ mod utils;
 mod config;
 mod color;
 mod ascii;
+mod test;
 
 fn initialize_config_file() {
     config::check_conf_file();
@@ -18,6 +19,7 @@ fn main() {
     let i = ascii::ascii_storage();
     i;
     let o = config::find_os(&system);
+    test::main();
     //get the ascii art form the config file
 
     //let ram_data_type = config::read_ram();

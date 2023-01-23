@@ -150,6 +150,8 @@ pub fn get_battery(system:&System) -> String
 }
 /// Get current window manager(or DE) using env vars
 fn get_wm() ->Option<String> {
+    //let os = system.name().unwrap();
+    //if
     let mut wm = env::var("DESKTOP_SESSION")
         .or_else(|_| env::var("XDG_CURRENT_DESKTOP"))
         .or_else(|_| env::var("WINDOWMANAGER"))
@@ -157,6 +159,7 @@ fn get_wm() ->Option<String> {
     if wm.starts_with('/') {
         wm = extract_file_from_path(&wm)?;
     }
+    
     Some(wm)
 }
 pub fn wm() -> String{
