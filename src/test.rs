@@ -22,7 +22,11 @@ pub fn test_hostname(system:&System)  {
 }
 fn test_os(system:&System){
     let os = system.name().unwrap();
+    let os_long = system.long_os_version().unwrap();
+    let os_ver = system.os_version().unwrap();
     println!("OS: {} ",os) ;
+    println!("OS Long : {} ",os_long) ;
+    println!("OS version : {} ",os_ver) ;
 }
 fn test_battery(system:&System){
     let mut batterty_percent= String::new();
