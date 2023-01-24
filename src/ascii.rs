@@ -1,8 +1,9 @@
 use regex::Regex;
 use crate::color::*;
 use std::collections::HashMap;
-
-pub fn ascii_storage(){
+use sysinfo::System;
+use crate::utils::verify_os;
+pub fn ascii_storage(system:&System){
     let mut ascii_art: HashMap<&str, &str> = HashMap::new();
     ascii_art.insert("custom", r#"
 {c2}   ///
@@ -182,11 +183,15 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ################  ################
 ################  ################
 "#);
-    let my_art = ascii_art.get("Windows").unwrap();
+    let my_art= ascii_art.get(verify_os(&system).as_str()).unwrap();
+    //let my_art = ascii_art.get("Windows").unwrap();
 
 
 
     println!("{}", translate_ascii_colors(my_art));
+}
+pub fn find_art(){
+
 }
 pub fn translate_ascii_colors(ascii: &str) -> String {
     let ascii = ascii

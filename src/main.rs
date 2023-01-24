@@ -18,7 +18,7 @@ fn main() {
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
-    let i = ascii::ascii_storage();
+    let i = ascii::ascii_storage(&system);
     i;
     let o = config::find_os(&system);
     test::main();
