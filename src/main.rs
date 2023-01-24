@@ -1,6 +1,6 @@
 use sysinfo::*;
 use prettytable::*;
-use crate::config::read_ascii;
+use crate::config::*;
 mod utils;
 mod config;
 mod color;
@@ -18,7 +18,7 @@ fn main() {
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
-    let i = ascii::ascii_storage(&system);
+    let i = ascii::ascii_storage();
     i;
     let o = config::find_os(&system);
     test::main();

@@ -8,8 +8,9 @@ use confy::{load, ConfyError};
 use toml::{Value};
 use sysinfo::*;
 use std::collections::HashMap;
-use crate::ascii::*;
+use crate::ascii::ascii_storage;
 use crate::utils::verify_os;
+
 //use crate::config::RamStorageMesurement::*;
 
 use std::fs;
@@ -22,13 +23,20 @@ use std::fs;
     Gb,
     Gib,
 }
-
+#[derive(Debug)]
+pub enum ReadAsciiError {
+    KeyNotFound(String),
+    ConfyError(ConfyError),
+}
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
 
     battery:bool,
     ram_data_type: RamStorageMesurement,
-    ascii: String,
+   // ascii: String,
+   ascii_mode:String,
+   ascii:HashMap<String,String>,
+
 }
 
 
@@ -136,10 +144,19 @@ pub fn load_conf() -> Result<Config, confy::ConfyError> {
         Err(error) => println!("error: {:?}", error),
     }
 }*/
-pub fn read_ascii() -> Result<String, confy::ConfyError> {
-    let cfg: Config = confy::load("RustyFetch", "config")?;
-    Ok(cfg.ascii)
+pub fn read_ascii() -> Result<String, ReadAsciiError> {
+let cfg: Config = match confy::load("RustyFetch", "config") {
+Ok(cfg) => cfg,
+Err(e) => return Err(ReadAsciiError::ConfyError(e))
+};
+let value = cfg.ascii.get(&*cfg.ascii_mode.to_string());
+match value {
+Some(v) => Ok(v.to_string()),
+None => Err(ReadAsciiError::KeyNotFound((&*cfg.ascii_mode.to_string()).to_string())),
 }
+}
+
+
 pub fn read_ram() -> RamStorageMesurement {
     let config = load_conf().unwrap();
     let ram_data_type = config.ram_data_type;
@@ -164,7 +181,8 @@ pub fn check_conf_file(system:&System) {
             let config = Config {
                 battery: false,
                 ram_data_type: RamStorageMesurement::Gib,
-                ascii: r#"
+                ascii_mode:verify_os(&system).to_string(),
+               /* ascii: r#"
 {c2}   ///
 {c2}   -::-`:     {c3}.--/:-
 {c2}   `-:::::..::{c3}+///+//++:+
@@ -187,7 +205,9 @@ pub fn check_conf_file(system:&System) {
 {c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
 {c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
           {c14}///////////////////////////:
-        "#.to_string(),
+        "#.to_string(),*/
+                ascii:ascii_storage()
+
             };
             match confy::store("RustyFetch", "config", &config) {
                 Ok(_) => println!(""),
@@ -346,7 +366,11 @@ impl Default for Config {
         Config {
             battery:true,
             ram_data_type: RamStorageMesurement::Mib,
-            ascii: "".to_string(),
+            ascii_mode:"auto".to_string(),
+          //  ascii: "".to_string(),
+            ascii:ascii_storage(),
+
+
         }
     }
 }

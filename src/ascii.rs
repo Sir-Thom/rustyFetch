@@ -2,10 +2,11 @@ use regex::Regex;
 use crate::color::*;
 use std::collections::HashMap;
 use sysinfo::System;
+use serde_json::to_string;
 use crate::utils::verify_os;
-pub fn ascii_storage(system:&System){
-    let mut ascii_art: HashMap<&str, &str> = HashMap::new();
-    ascii_art.insert("custom", r#"
+pub fn ascii_storage() -> HashMap<String, String> {
+    let mut ascii_art: HashMap<String, String> = HashMap::new();
+    ascii_art.insert("custom".to_string(), r#"
 {c2}   ///
 {c2}   -::-`:     {c3}.--/:-
 {c2}   `-:::::..::{c3}+///+//++:+
@@ -28,23 +29,23 @@ pub fn ascii_storage(system:&System){
 {c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
 {c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
           {c14}///////////////////////////:
-        "#);
-    ascii_art.insert("openSUSE Tumbleweed",r#"
-    {c3}                                     ......
-     .,cdxxxoc,.               .:kKMMMNWMMMNk:.
-    cKMMN0OOOKWMMXo. ;        ;0MWk:.      .:OMMk.
-  ;WMK;.       .lKMMNM,     :NMK,             .OMW;
- cMW;            'WMMMN   ,XMK,                 oMM'
-.MMc               ..;l. xMN:                    KM0
-'MM.                   'NMO                      oMM
-.MM,                 .kMMl                       xMN
- KM0               .kMM0. .dl:,..               .WMd
- .XM0.           ,OMMK,    OMMMK.              .XMK
-   oWMO:.    .;xNMMk,       NNNMKl.          .xWMx
-     :ONMMNXMMMKx;          .  ,xNMWKkxllox0NMWk,
-         .....                    .:dOOXXKOxl,
-    "#);
-    ascii_art.insert("Arch Linux", r#"
+        "#.to_string());
+    ascii_art.insert("openSUSE Tumbleweed".to_string(), r#"
+    {c3}                                   ......
+    {c3}    .,cdxxxoc,.               .:kKMMMNWMMMNk:.
+    {c3}  cKMMN0OOOKWMMXo. ;        ;0MWk:.      .:OMMk.
+   {c3} ;WMK;.       .lKMMNM,     :NMK,             .OMW;
+  {c3} cMW;            'WMMMN   ,XMK,                 oMM'
+ {c3} .MMc               ..;l. xMN:                    KM0
+ {c3} 'MM.                   'NMO                      oMM
+ {c3} .MM,                 .kMMl                       xMN
+  {c3} KM0               .kMM0. .dl:,..               .WMd
+  {c3} .XM0.           ,OMMK,    OMMMK.              .XMK
+    {c3} oWMO:.    .;xNMMk,       NNNMKl.          .xWMx
+      {c3} :ONMMNXMMMKx;          .  ,xNMWKkxllox0NMWk,
+          {c3} .....                    .:dOOXXKOxl,
+    "#.to_string());
+    ascii_art.insert("Arch Linux".to_string(), r#"
     {c5}                    y:
                   sMN-
                  +MMMm`
@@ -64,8 +65,8 @@ pub fn ascii_storage(system:&System){
    -NMMMMMMMMMh         `mNMMMMMMMMd`
   /NMMMNds+:.`             `-/oymMMMm.
  +Mmy/.                          `:smN:
-/+. "#);
-    ascii_art.insert("Pop!_OS",r#"
+/+. "#.to_string());
+    ascii_art.insert("Pop!_OS".to_string(), r#"
     {c5}         /////////////
          /////////////////////
       ///////{c8}*767{c5}////////////////
@@ -86,8 +87,8 @@ pub fn ascii_storage(system:&System){
       ///////////////////////////
          /////////////////////
              /////////////
-    "#);
-    ascii_art.insert("Ubuntu",r#"
+    "#.to_string());
+    ascii_art.insert("Ubuntu".to_string(), r#"
 {c4}              .-/+oossssoo+\-.
 {c4}          ´:+ssssssssssssssssss+:`
 {c4}        -+ssssssssssssssssssyyssss+-
@@ -108,9 +109,9 @@ pub fn ascii_storage(system:&System){
 {c4}        -+sssssssssssssssss{c8}yyy{c4}ssss+-
 {c4}          `:+ssssssssssssssssss+:`
 {c4}              .-\+oossssoo+/-.
-        "#,
+        "#.to_string(),
     );
-    ascii_art.insert("Fedora",r#"
+    ascii_art.insert("Fedora".to_string(), r#"
     {c14}         .',;::::;,'.
          .';:cccccccccccc:;,.
       .;cccccccccccccccccccccc;.
@@ -130,8 +131,8 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 :cccccccccccccccccccccccccccc:'.
 .:cccccccccccccccccccccc:;,..
   '::cccccccccccccc::;,.
-    {reset}"#);
-    ascii_art.insert("Manjaro",r#"{c3}
+    {reset}"#.to_string());
+    ascii_art.insert("Manjaro".to_string(), r#"{c3}
 ██████████████████  ████████
 ██████████████████  ████████
 ██████████████████  ████████
@@ -146,8 +147,8 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ████████  ████████  ████████
 ████████  ████████  ████████
 ████████  ████████  ████████
-    "#);
-    ascii_art.insert("EndeavourOS",r#"
+    "#.to_string());
+    ascii_art.insert("EndeavourOS".to_string(), r#"
 {c2}                     ./{c6}o{c4}.
 {c2}                   ./{c6}sssso{c4}-
 {c2}                 `:{c6}osssssss+{c4}-
@@ -163,9 +164,9 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 {c2} `..-+{c6}oosssssssssssssssssssssssso{c4}+++++/`
    ./++++++++++++++++++++++++++++++/:.
   `:::::::::::::::::::::::::------``
-    "#);
+    "#.to_string());
 
-    ascii_art.insert("Windows", r#"
+    ascii_art.insert("Windows".to_string(), r#"
  {c7}
 ################  ################
 ################  ################
@@ -182,13 +183,19 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ################  ################
 ################  ################
 ################  ################
-"#);
-    let my_art= ascii_art.get(verify_os(&system).as_str()).unwrap();
-    //let my_art = ascii_art.get("Windows").unwrap();
+"#.to_string());
+    //let json_string = to_string(&ascii_art).unwrap();
+   //let my_art = ascii_art.get(verify_os(&system).as_str()).unwrap();
+    let mut my_art ="";
+
+    for (key, value) in ascii_art.iter() {
+
+        println!("{}",ascii_art.get(key).unwrap())
+    }
+    return  ascii_art;
 
 
 
-    println!("{}", translate_ascii_colors(my_art));
 }
 pub fn find_art(){
 
