@@ -1,16 +1,9 @@
-use std::{env,fs};
-use std::ffi::OsStr;
-use std::path::Path;
-use sysinfo::*;
-use std::string::String;
-use crate::color::*;
-use std::process::{Command, Stdio};
-use crate::config::*;
+
 use crate::config::RamStorageMesurement::*;
 use crate::utils::*;
 use crate::utils::PackagesType::*;
-//use crate::utils::PackagesType::*;
 
+#[test]
 pub fn main(){
     let mut system = System::new_all();
     system.refresh_all();
@@ -19,10 +12,12 @@ pub fn main(){
     test_hostname(&system);
     test_packages(&system);
 }
+#[warn(dead_code)]
  fn test_hostname(system:&System)  {
     let hostname = system.host_name().unwrap().to_string();
     println!("Hostname: {} ",hostname)
 }
+#[warn(dead_code)]
 pub enum PackagesType{
     Rpm,
     Apt,
@@ -31,6 +26,7 @@ pub enum PackagesType{
     Flatpak,
     None,
 }
+
 fn test_os(system:&System){
     let os = system.name().unwrap();
     let os_long = system.long_os_version().unwrap();
@@ -49,8 +45,6 @@ fn test_os(system:&System){
         let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
 
         packages_base.push_str(stdout.to_string().as_str());
-        //packages_base.push_str(str_pkg_type);
-      //  packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
         println!(" packages : {}",packages_base)
     }
     else {
@@ -125,8 +119,7 @@ fn test_os(system:&System){
             }
         }
         println!(" packages : {}",packages_base)
-        //packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
-        //return packages_base
+        
     }
 }
 fn test_battery(system:&System){
@@ -148,7 +141,7 @@ fn test_battery(system:&System){
         let stdout = String::from_utf8(output.stdout).unwrap();
         batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
         batterty_percent.push_str(percen_symbol);
-        //println!("{}", stdout);
+       
 
     }
     else if verify_os(&system) == "MacOs" {
@@ -161,9 +154,9 @@ fn test_battery(system:&System){
         let stdout = String::from_utf8(output.stdout).unwrap();
         batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
         batterty_percent.push_str(percen_symbol);
-        //println!("{}", stdout);
+        
     }
-        //verify_os(&system) == "Linux"
+  
     else   {
         let output = Command::new("cat").arg("/sys/class/power_supply/BAT0/capacity")
             // Tell the OS to record the command's output
@@ -179,5 +172,5 @@ fn test_battery(system:&System){
         batterty_percent.push_str(percen_symbol);
         println!("Battery : {} ",batterty_percent);
     }
-    //else { println!("error battery not found"); }
+
 }

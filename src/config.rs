@@ -1,3 +1,4 @@
+
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::io::{Read, Write,Seek};
@@ -11,10 +12,9 @@ use std::collections::HashMap;
 use crate::ascii::ascii_storage;
 use crate::utils::verify_os;
 
-//use crate::config::RamStorageMesurement::*;
 
 use std::fs;
-//use std::borrow::Cow;
+
 #[derive(Debug, Deserialize, Serialize)]
 #[derive(PartialEq)]
  pub enum RamStorageMesurement {
@@ -30,16 +30,14 @@ pub enum ReadAsciiError {
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-
     battery:bool,
     ram_data_type: RamStorageMesurement,
-   // ascii: String,
    ascii_mode:String,
    ascii:HashMap<String,String>,
 
 }
 
-
+#[warn(dead_code)]
 fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
     let mut file = match OpenOptions::new().read(true).write(true).open(file_path) {
         Ok(file) => file,
@@ -96,9 +94,8 @@ fn add_comment_to_toml(file_path: &str, comment: &str, line: usize) {
 }
 
 pub fn find_os(system:&System) -> String {
-    let os_name = system.name().unwrap();
+    let os_name = system .name().unwrap();
     return  os_name
- //   println!("{}",os_name.unwrap());
 }
 
 
@@ -108,42 +105,6 @@ pub fn load_conf() -> Result<Config, confy::ConfyError> {
     Ok(cfg)
 }
 
-/*pub fn save(){
-
-    let config = Config {
-        battery:true,
-        ram_data_type: Gib,
-        ascii: r#"
-{c2}   ///
-{c2}   -::-`:     {c3}.--/:-
-{c2}   `-:::::..::{c3}+///+//++:+
-{c2}      +-:::::-:{c3}/++++++++++//:--
-{c2}       -:::::--{c3}/++++++++++++++//:
-{c2}       .-:::::::{c3}//++++++++++++++//+:
-{c2}       .---::::::{c3}//////++++++++++++/+
-{c3}  ///:/++++++++++++++////////+++++++//::.
-{c3} +/++++++++++++++++++++++++++///////++//--
-{c3} ://///////////////////////////++////////:.
-{c3}     /..-://////////////////++/////////////:.
-{c14}     `:+{c6}oooooooooooo::+oooooooo:-{c3}/++++++:o//
-{c14}    `-+{c6}oooooooooooo+  /oooooooo` -ooooos{c14}+-
-{c14}    -+++{c6}ooooooooooo+  /oooooooo` -ooooooso{c14}.
-{c14}    -+++{c6}ooooooooooo+--+oooooooo--/ooooooso{c14}.
-{c14}  -:++++{c6}oooooooosysoooooooooooooosyyoooooo{c14}/.
-{c14}  `-o+++{c6}ooooooooossooooooooooooooossoooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
-{c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
-          {c14}///////////////////////////:
-        "#.to_string(),
-    };
-
-    match confy::store("RustyFetch", "config", &config) {
-        Ok(_) => println!(""),
-        Err(error) => println!("error: {:?}", error),
-    }
-}*/
 pub fn read_ascii() -> Result<String, ReadAsciiError> {
 let cfg: Config = match confy::load("RustyFetch", "config") {
 Ok(cfg) => cfg,
@@ -152,7 +113,7 @@ Err(e) => return Err(ReadAsciiError::ConfyError(e))
 let value = cfg.ascii.get(&*cfg.ascii_mode.to_string());
 match value {
 Some(v) => Ok(v.to_string()),
-None => Err(ReadAsciiError::KeyNotFound((&*cfg.ascii_mode.to_string()).to_string())),
+None => Err(ReadAsciiError::KeyNotFound(("not working".to_string()).to_string())),
 }
 }
 
@@ -160,14 +121,12 @@ None => Err(ReadAsciiError::KeyNotFound((&*cfg.ascii_mode.to_string()).to_string
 pub fn read_ram() -> RamStorageMesurement {
     let config = load_conf().unwrap();
     let ram_data_type = config.ram_data_type;
-    //println!("Ram data type: {:?}", ram_data_type);
     ram_data_type
 }
 
 pub fn check_battery() ->bool{
     let config = load_conf().unwrap();
     let battery  = config.battery;
-    //println!("Ram data type: {:?}", ram_data_type);
     return battery
 }
 pub fn check_conf_file(system:&System) {
@@ -181,31 +140,7 @@ pub fn check_conf_file(system:&System) {
             let config = Config {
                 battery: false,
                 ram_data_type: RamStorageMesurement::Gib,
-                ascii_mode:verify_os(&system).to_string(),
-               /* ascii: r#"
-{c2}   ///
-{c2}   -::-`:     {c3}.--/:-
-{c2}   `-:::::..::{c3}+///+//++:+
-{c2}      +-:::::-:{c3}/++++++++++//:--
-{c2}       -:::::--{c3}/++++++++++++++//:
-{c2}       .-:::::::{c3}//++++++++++++++//+:
-{c2}       .---::::::{c3}//////++++++++++++/+
-{c3}  ///:/++++++++++++++////////+++++++//::.
-{c3} +/++++++++++++++++++++++++++///////++//--
-{c3} ://///////////////////////////++////////:.
-{c3}     /..-://////////////////++/////////////:.
-{c14}     `:+{c6}oooooooooooo::+oooooooo:-{c3}/++++++:o//
-{c14}    `-+{c6}oooooooooooo+  /oooooooo` -ooooos{c14}+-
-{c14}    -+++{c6}ooooooooooo+  /oooooooo` -ooooooso{c14}.
-{c14}    -+++{c6}ooooooooooo+--+oooooooo--/ooooooso{c14}.
-{c14}  -:++++{c6}oooooooosysoooooooooooooosyyoooooo{c14}/.
-{c14}  `-o+++{c6}ooooooooossooooooooooooooossoooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
-{c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
-          {c14}///////////////////////////:
-        "#.to_string(),*/
+                ascii_mode: "".to_string(),
                 ascii:ascii_storage()
 
             };
@@ -220,27 +155,6 @@ pub fn check_conf_file(system:&System) {
 
 }
 
-/*
-pub fn write_config_fetch_item() {
-    let file = OpenOptions::new().create(true).write(true).open("config.conf");
-    let mut file = match file {
-        Ok(file) => file,
-        Err(e) => {
-            println!("Error opening/creating file: {}", e);
-            return;
-        }
-    };
-    if file.metadata().unwrap().len() == 0 {
-        let section_header = "[Fetch Items]\n";
-        match file.write_all(section_header.as_bytes()) {
-            Ok(_) => (),
-            Err(e) => println!("Error writing to file: {}", e),
-        }
-        //let infos = r#""#;
-    }
-}*/
-//pub fn
-//pub fn
 pub fn translate_ascii_colors(ascii: &str) -> String {
     let ascii = ascii
         .replace("{c1}", BLACK)
@@ -264,110 +178,13 @@ pub fn translate_ascii_colors(ascii: &str) -> String {
     ascii
 }
 
-/*pub fn write_config() {
-    // Open the file for writing and create it if it doesn't exist
-    let file = OpenOptions::new().create(true).write(true).open("config.conf");
-
-    // Check if the file was successfully opened
-    let mut file = match file {
-        Ok(file) => file,
-        Err(e) => {
-            println!("Error opening/creating file: {}", e);
-            return;
-        }
-    };
-
-    // Write the ASCII art to the file if it is empty
-    if file.metadata().unwrap().len() == 0 {
-        let section_header = "[Custom]\n";
-        match file.write_all(section_header.as_bytes()) {
-            Ok(_) =>  (),
-            Err(e) => println!("Error writing to file: {}", e),
-        }
-        let ascii = r#"
-{c2}   ///
-{c2}   -::-`:     {c3}.--/:-
-{c2}   `-:::::..::{c3}+///+//++:+
-{c2}      +-:::::-:{c3}/++++++++++//:--
-{c2}       -:::::--{c3}/++++++++++++++//:
-{c2}       .-:::::::{c3}//++++++++++++++//+:
-{c2}       .---::::::{c3}//////++++++++++++/+
-{c3}  ///:/++++++++++++++////////+++++++//::.
-{c3} +/++++++++++++++++++++++++++///////++//--
-{c3} ://///////////////////////////++////////:.
-{c3}     /..-://////////////////++/////////////:.
-{c14}     `:+{c6}oooooooooooo::+oooooooo:-{c3}/++++++:o//
-{c14}    `-+{c6}oooooooooooo+  /oooooooo` -ooooos{c14}+-
-{c14}    -+++{c6}ooooooooooo+  /oooooooo` -ooooooso{c14}.
-{c14}    -+++{c6}ooooooooooo+--+oooooooo--/ooooooso{c14}.
-{c14}  -:++++{c6}oooooooosysoooooooooooooosyyoooooo{c14}/.
-{c14}  `-o+++{c6}ooooooooossooooooooooooooossoooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  `-o+++{c6}oooooooooooooooooooooooooooooooooo{c14}+-
-{c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
-{c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
-          {c14}///////////////////////////:
-        "#;
-        match file.write_all(ascii.as_bytes()) {
-            Ok(_) =>  return,
-            Err(e) => println!("Error writing to file: {}", e),
-        }
-    }
-
-
-    file.flush().expect("Error flushing the file");
-    file.sync_all().expect("Error syncing the file");
-}
-
-pub fn read_config() -> String{
-    let mut file = OpenOptions::new().read(true).open("config.conf").expect("Error opening file for reading");
-
-    file.flush().expect("Error flushing the file");
-    file.sync_all().expect("Error syncing the file");
-    file.seek(std::io::SeekFrom::Start(0)).expect("Error reading from file");
-
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("Error reading from file");
-
-    let section_header = "[Custom]\n";
-    let start_index = contents.find(section_header).expect("ASCII ART SECTION not found");
-    let ascii = contents[start_index + section_header.len()..].to_string();
-
-    let re = Regex::new(r"\{([1-9a-zA-Z_]+)\}").unwrap();
-    let ascii = re.replace_all(&ascii, |caps: &regex::Captures| {
-        let color = caps[1].to_string();
-        match color.as_str() {
-            "c1" => BLACK,
-            "c2" => RED,
-            "c3" => GREEN,
-            "c4" => YELLOW,
-            "c5" => BLUE,
-            "c6" => MAGENTA,
-            "c7" => CYAN,
-            "c8" => WHITE,
-            "c9" => BLACK_BRIGHT,
-            "c10" => RED_BRIGHT,
-            "c11" => GREEN_BRIGHT,
-            "c12" => YELLOW_BRIGHT,
-            "c13" => BLUE_BRIGHT,
-            "c14" => MAGENTA_BRIGHT,
-            "c15" => CYAN_BRIGHT,
-            "c16" => WHITE_BRIGHT,
-            "reset" => RESET,
-            _ => ""
-        }
-
-    });
-    return  (ascii).to_string()
-}*/
 
 impl Default for Config {
     fn default() -> Self {
         Config {
             battery:true,
             ram_data_type: RamStorageMesurement::Mib,
-            ascii_mode:"auto".to_string(),
-          //  ascii: "".to_string(),
+            ascii_mode: "".to_string(),
             ascii:ascii_storage(),
 
 

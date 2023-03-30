@@ -10,7 +10,7 @@ mod test;
 fn initialize_config_file() {
     let mut system = System::new_all();
     system.refresh_all();
-    config::check_conf_file(&system);
+
 }
 
 fn main() {
@@ -18,10 +18,9 @@ fn main() {
     let mut system = System::new_all();
     // Update all information of `System` struct.
     system.refresh_all();
-    let i = ascii::ascii_storage();
-    i;
-    let o = config::find_os(&system);
-    test::main();
+   
+
+   
     //get the ascii art form the config file
 
     //let ram_data_type = config::read_ram();

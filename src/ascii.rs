@@ -29,7 +29,7 @@ pub fn ascii_storage() -> HashMap<String, String> {
 {c14}  .:+++++++{c6}ooooooooooooooooooooooooooooo{c14}++/.
 {c14}    .://+++++++++++++++{c6}oo+oooooooooo{c14}+++/::.`
           {c14}///////////////////////////:
-        "#.to_string());
+         {reset}"#.to_string());
     ascii_art.insert("openSUSE Tumbleweed".to_string(), r#"
     {c3}                                   ......
     {c3}    .,cdxxxoc,.               .:kKMMMNWMMMNk:.
@@ -44,9 +44,9 @@ pub fn ascii_storage() -> HashMap<String, String> {
     {c3} oWMO:.    .;xNMMk,       NNNMKl.          .xWMx
       {c3} :ONMMNXMMMKx;          .  ,xNMWKkxllox0NMWk,
           {c3} .....                    .:dOOXXKOxl,
-    "#.to_string());
+     {reset}"#.to_string());
     ascii_art.insert("Arch Linux".to_string(), r#"
-    {c5}                    y:
+    {c5}               y:
                   sMN-
                  +MMMm`
                 /MMMMMd`
@@ -65,7 +65,8 @@ pub fn ascii_storage() -> HashMap<String, String> {
    -NMMMMMMMMMh         `mNMMMMMMMMd`
   /NMMMNds+:.`             `-/oymMMMm.
  +Mmy/.                          `:smN:
-/+. "#.to_string());
+/+.                                  +.\
+{reset}"#.to_string());
     ascii_art.insert("Pop!_OS".to_string(), r#"
     {c5}         /////////////
          /////////////////////
@@ -87,7 +88,7 @@ pub fn ascii_storage() -> HashMap<String, String> {
       ///////////////////////////
          /////////////////////
              /////////////
-    "#.to_string());
+     {reset}"#.to_string());
     ascii_art.insert("Ubuntu".to_string(), r#"
 {c4}              .-/+oossssoo+\-.
 {c4}          ´:+ssssssssssssssssss+:`
@@ -109,7 +110,7 @@ pub fn ascii_storage() -> HashMap<String, String> {
 {c4}        -+sssssssssssssssss{c8}yyy{c4}ssss+-
 {c4}          `:+ssssssssssssssssss+:`
 {c4}              .-\+oossssoo+/-.
-        "#.to_string(),
+         {reset}"#.to_string(),
     );
     ascii_art.insert("Fedora".to_string(), r#"
     {c14}         .',;::::;,'.
@@ -147,7 +148,7 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ████████  ████████  ████████
 ████████  ████████  ████████
 ████████  ████████  ████████
-    "#.to_string());
+     {reset}"#.to_string());
     ascii_art.insert("EndeavourOS".to_string(), r#"
 {c2}                     ./{c6}o{c4}.
 {c2}                   ./{c6}sssso{c4}-
@@ -164,7 +165,7 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 {c2} `..-+{c6}oosssssssssssssssssssssssso{c4}+++++/`
    ./++++++++++++++++++++++++++++++/:.
   `:::::::::::::::::::::::::------``
-    "#.to_string());
+     {reset}"#.to_string());
 
     ascii_art.insert("Windows".to_string(), r#"
  {c7}
@@ -183,14 +184,13 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ################  ################
 ################  ################
 ################  ################
-"#.to_string());
-    //let json_string = to_string(&ascii_art).unwrap();
-   //let my_art = ascii_art.get(verify_os(&system).as_str()).unwrap();
+ {reset}"#.to_string());
+
     let mut my_art ="";
 
     for (key, value) in ascii_art.iter() {
 
-        println!("{}",ascii_art.get(key).unwrap())
+        println!("{}",translate_ascii_colors(ascii_art.get(key).unwrap()))
     }
     return  ascii_art;
 

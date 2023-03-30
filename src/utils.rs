@@ -8,6 +8,7 @@ use std::process::{Command, Stdio};
 use crate::config::*;
 use crate::config::RamStorageMesurement::*;
 use crate::utils::PackagesType::*;
+//use rust_gpu_tools::Device;
 /*pub fn get_terminal() -> String{
     let output = Command::new("basename");
     return format!("{RED}Terminal{WHITE} ~ {RED}{}{RED}", term).to_string();
@@ -127,7 +128,7 @@ pub fn get_battery(system:&System) -> String
         let stdout = String::from_utf8(output.stdout).unwrap();
         batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
         batterty_percent.push_str(percen_symbol);
-        //println!("{}", stdout);
+      
 
     }
         else if os == "MacOs" {
@@ -140,8 +141,7 @@ pub fn get_battery(system:&System) -> String
             let stdout = String::from_utf8(output.stdout).unwrap();
             batterty_percent = stdout.chars().take_while(|c| !c.eq(&'\n')).collect();
             batterty_percent.push_str(percen_symbol);
-            //println!("{}", stdout);
-        }
+        } 
     else if os == "Linux"  {
         let output = Command::new("cat").arg("/sys/class/power_supply/BAT0/capacity")
             // Tell the OS to record the command's output
@@ -165,7 +165,6 @@ pub fn get_battery(system:&System) -> String
 }
 /// Get current window manager(or DE) using env vars
 fn get_wm() ->Option<String> {
-    //let os = system.name().unwrap();
 
     let mut wm = env::var("DESKTOP_SESSION")
         .or_else(|_| env::var("XDG_CURRENT_DESKTOP"))
@@ -223,10 +222,9 @@ pub fn get_os(system:&System) -> String{
         let os = system.name().unwrap().to_string();
         return format!("{CYAN}OS{WHITE} ~ {WHITE}{}{BLUE}", os).to_string();
     }
-
-
-
 }
+
+
 pub fn get_cpu(system:&System) -> String {
 
     let mut cpu_brand = "";
@@ -282,13 +280,13 @@ pub fn get_nb_packages(system:&System) -> String{
             let str_pkg_type = " (Winget) ";
             let output = Command::new("winget")
                 .arg("list")
-               // .arg("-a")
+             
                 .output().ok().unwrap();
 
             let stdout = String::from_utf8_lossy(&output.stdout).lines().count();
             packages_base.push_str(stdout.to_string().as_str());
             packages_base.push_str(str_pkg_type);
-            //packages_base.push_str(str_pkg_type);
+  
             packages_base = format!("{GREEN}Packages{WHITE} ~ {WHITE}{}{RESET}", packages_base);
             return  packages_base
     }
