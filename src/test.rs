@@ -1,9 +1,11 @@
-
+use std::{env,fs};
+use std::ffi::OsStr;
+use std::path::Path;
 use sysinfo::*;
 use std::string::String;
-
+use crate::color::*;
 use std::process::{Command, Stdio};
-
+use crate::config::*;
 use crate::config::RamStorageMesurement::*;
 use crate::utils::*;
 use crate::utils::PackagesType::*;
@@ -22,7 +24,7 @@ pub fn main(){
     let hostname = system.host_name().unwrap().to_string();
     println!("Hostname: {} ",hostname)
 }
-#[warn(dead_code)]
+
 pub enum PackagesType{
     Rpm,
     Apt,
