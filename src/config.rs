@@ -111,6 +111,9 @@ Ok(cfg) => cfg,
 Err(e) => return Err(ReadAsciiError::ConfyError(e))
 };
 let value = cfg.ascii.get(&*cfg.ascii_mode.to_string());
+if value.unwrap() == "auto"{
+    print!("TODO");
+}
 match value {
 Some(v) => Ok(v.to_string()),
 None => Err(ReadAsciiError::KeyNotFound(("not working".to_string()).to_string())),
@@ -182,9 +185,9 @@ pub fn translate_ascii_colors(ascii: &str) -> String {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            battery:true,
+            battery:false,
             ram_data_type: RamStorageMesurement::Mib,
-            ascii_mode: "".to_string(),
+            ascii_mode: "custom".to_string(),
             ascii:ascii_storage(),
 
 

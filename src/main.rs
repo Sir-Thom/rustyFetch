@@ -5,6 +5,7 @@ mod utils;
 mod config;
 mod color;
 mod ascii;
+#[cfg(test)]
 mod test;
 
 fn initialize_config_file() {
@@ -44,9 +45,9 @@ fn main() {
     let color_palette = utils::get_color_palette();
 
     let userprompt = utils::make_userprompt(&system);
-
+    
     let hostname = utils::get_hostname_pretty(&system);
-
+    //optional (set in the config)
     let battery = utils::get_battery(&system);
 
     //prepare all fetch item to print Note:order matter here

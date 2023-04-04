@@ -9,18 +9,10 @@ use crate::config::*;
 use crate::config::RamStorageMesurement::*;
 use crate::utils::*;
 use crate::utils::PackagesType::*;
-
-#[test]
-pub fn main(){
-    let mut system = System::new_all();
-    system.refresh_all();
-    test_os(&system);
-    test_battery(&system);
-    test_hostname(&system);
-    test_packages(&system);
-}
-#[warn(dead_code)]
- fn test_hostname(system:&System)  {
+// here some various test to see if the the fetching for the data work
+#[test] 
+fn test_hostname()  {
+    let system = System::new();
     let hostname = system.host_name().unwrap().to_string();
     println!("Hostname: {} ",hostname)
 }
@@ -33,8 +25,9 @@ pub enum PackagesType{
     Flatpak,
     None,
 }
-
-fn test_os(system:&System){
+#[test]
+fn test_os(){
+    let system = System::new();
     let os = system.name().unwrap();
     let os_long = system.long_os_version().unwrap();
     let os_ver = system.os_version().unwrap();
@@ -42,8 +35,10 @@ fn test_os(system:&System){
     println!("OS Long : {} ",os_long) ;
     println!("OS version : {} ",os_ver) ;
 }
- fn test_packages(system:&System) {
-    let mut packages_base =String::new();
+#[test]
+ fn test_packages() {
+     let system = System::new();
+     let mut packages_base =String::new();
     if verify_os(&system) == "Windows" {
         let output = Command::new("winget")
             .arg("list")
@@ -129,7 +124,9 @@ fn test_os(system:&System){
         
     }
 }
-fn test_battery(system:&System){
+#[test]
+fn test_battery(){
+    let system = System::new();
     let mut batterty_percent= String::new();
     let percen_symbol = "%";
     let os_long= system.long_os_version().unwrap().to_string();

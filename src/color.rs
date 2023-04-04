@@ -25,7 +25,7 @@ pub const BLUE_BG: &str = "\x1b[44m";
 pub const MAGENTA_BG: &str = "\x1b[45m";
 pub const CYAN_BG: &str = "\x1b[46m";
 pub const WHITE_BG: &str = "\x1b[47m";
-
+// bright bg color
 pub const BLACK_BRIGHT_BG: &str ="\x1B[100m";
 pub const RED_BRIGHT_BG: &str = "\x1B[101m";
 pub const GREEN_BRIGHT_BG: &str = "\x1B[102m";

@@ -1,9 +1,11 @@
 use regex::Regex;
+use std::fs::File;
+use std::io::Read;
 use crate::color::*;
 use std::collections::HashMap;
-use sysinfo::System;
-use serde_json::to_string;
-use crate::utils::verify_os;
+use sysinfo::*;
+use crate::config::*;
+//use crate::utils::verify_os;
 pub fn ascii_storage() -> HashMap<String, String> {
     let mut ascii_art: HashMap<String, String> = HashMap::new();
     ascii_art.insert("custom".to_string(), r#"
@@ -185,21 +187,59 @@ cccccccc;{c8}.:odl:.{c14};cccccccccccccc:,.
 ################  ################
 ################  ################
  {reset}"#.to_string());
-
-    let mut my_art ="";
+ascii_art.insert("auto".to_string(),translate_ascii_colors(find_art().as_str()));
+  
 
     for (key, value) in ascii_art.iter() {
 
-        println!("{}",translate_ascii_colors(ascii_art.get(key).unwrap()))
+        println!("{}",translate_ascii_colors(ascii_art.get(key).unwrap()));
+        println!("{}",find_art());
     }
     return  ascii_art;
 
 
 
 }
-pub fn find_art(){
-
+pub fn find_art()-> String{
+    
+    let system = System::new();
+    let sys_name =  system.name().unwrap().to_string();
+    let os = system.name().unwrap().to_string();
+    
+    if os == "linux"{
+       let i =  system.name().unwrap().to_string();
+        return sys_name;
+    }
+    else if os == "windows" {
+        // TODO
+         return sys_name
+    }
+    else{
+        return sys_name
+    }
 }
+
+fn get_linux_distro() -> Option<String> {
+    let mut file = match File::open("/etc/os-release") {
+        Ok(f) => f,
+        Err(_) => return None,
+    };
+
+    let mut contents = String::new();
+    if let Err(_) = file.read_to_string(&mut contents) {
+        return None;
+    }
+
+    for line in contents.lines() {
+        if line.starts_with("PRETTY_NAME=") {
+            let distro = line.split('=').nth(1)?;
+            return Some(distro.trim_matches('"').to_owned());
+        }
+    }
+
+    None
+}
+
 pub fn translate_ascii_colors(ascii: &str) -> String {
     let ascii = ascii
         .replace("{c1}", BLACK)
