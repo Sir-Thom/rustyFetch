@@ -9,7 +9,7 @@ use confy::{load, ConfyError};
 use toml::{Value};
 use sysinfo::*;
 use std::collections::HashMap;
-use crate::ascii::ascii_storage;
+use crate::ascii::{ascii_storage,find_art};
 use crate::utils::verify_os;
 
 
@@ -187,7 +187,7 @@ impl Default for Config {
         Config {
             battery:false,
             ram_data_type: RamStorageMesurement::Mib,
-            ascii_mode: "custom".to_string(),
+            ascii_mode: find_art(),
             ascii:ascii_storage(),
 
 

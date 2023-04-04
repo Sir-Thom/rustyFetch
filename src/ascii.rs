@@ -192,8 +192,8 @@ ascii_art.insert("auto".to_string(),translate_ascii_colors(find_art().as_str()))
 
     for (key, value) in ascii_art.iter() {
 
-        println!("{}",translate_ascii_colors(ascii_art.get(key).unwrap()));
-        println!("{}",find_art());
+      //  println!("{}",translate_ascii_colors(ascii_art.get(key).unwrap()));
+       // println!("{}",find_art());
     }
     return  ascii_art;
 
