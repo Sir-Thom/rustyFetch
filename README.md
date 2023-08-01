@@ -21,7 +21,7 @@ The built executable will be available in the `target/release/` directory.
 Run the program from the terminal to display system information and ASCII art:
 
 ```
-./neofetch-rust
+./rustyfetch
 ```
 
 The program will gather the system information, including the operating system, hostname, uptime, number of installed packages, kernel version, window manager, CPU, memory, shell, and color palette.
